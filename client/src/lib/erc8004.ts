@@ -1,4 +1,5 @@
 import type { Address } from "viem";
+import { EXPLORER_URL } from "./explorer";
 
 export const ERC8004_IDENTITY_REGISTRY =
   "0x8004A818BFB912233c491871b3d84c89A494BD9e" as const satisfies Address;
@@ -58,13 +59,13 @@ export const reputationRegistryAbi = [
 ] as const;
 
 export function nftExplorerUrl(agentId: string) {
-  return `https://sepolia.arbiscan.io/nft/${ERC8004_IDENTITY_REGISTRY}/${agentId}`;
+  return `${EXPLORER_URL}/nft/${ERC8004_IDENTITY_REGISTRY}/${agentId}`;
 }
 
 export function registryExplorerUrl() {
-  return `https://sepolia.arbiscan.io/address/${ERC8004_IDENTITY_REGISTRY}`;
+  return `${EXPLORER_URL}/address/${ERC8004_IDENTITY_REGISTRY}`;
 }
 
 export function reputationRegistryExplorerUrl() {
-  return `https://sepolia.arbiscan.io/address/${ERC8004_REPUTATION_REGISTRY}`;
+  return `${EXPLORER_URL}/address/${ERC8004_REPUTATION_REGISTRY}`;
 }

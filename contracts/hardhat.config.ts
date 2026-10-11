@@ -23,6 +23,11 @@ const config: HardhatUserConfig = {
       chainId: 421614,
       accounts,
     },
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
+      chainId: 84532,
+      accounts,
+    },
     robinhoodTestnet: {
       url: process.env.ROBINHOOD_TESTNET_RPC_URL || "https://rpc.testnet.chain.robinhood.com",
       chainId: 46630,
@@ -32,6 +37,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       arbitrumSepolia: process.env.ARBISCAN_API_KEY || "",
+      baseSepolia: process.env.BASESCAN_API_KEY || "",
       robinhoodTestnet: "empty",
     },
     customChains: [

@@ -1,6 +1,12 @@
 import { createPublicClient, createWalletClient, formatUnits, http, parseUnits, type Address, type Hash } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { SETTLEMENT_CHAIN, SETTLEMENT_CHAIN_NAME, SETTLEMENT_RPC_URL, USDC_ADDRESS } from "./network.js";
+import {
+  SETTLEMENT_CHAIN,
+  SETTLEMENT_CHAIN_NAME,
+  SETTLEMENT_FAUCET_URL,
+  SETTLEMENT_RPC_URL,
+  USDC_ADDRESS,
+} from "./network.js";
 
 const erc20Abi = [
   {
@@ -30,7 +36,7 @@ export const publicClient = createPublicClient({
 export function gasShortfallMessage(address: string, ethBalance: number): string {
   return (
     `Agent wallet ${address} needs free ${SETTLEMENT_CHAIN_NAME} ETH for gas (has ${ethBalance.toFixed(6)} ETH). ` +
-    "Open Wallets → fund treasury from an Arbitrum Sepolia faucet (no mainnet ETH), then click ETH gas."
+    `Open Wallets → fund treasury from a ${SETTLEMENT_CHAIN_NAME} faucet (${SETTLEMENT_FAUCET_URL}, no mainnet ETH), then click ETH gas.`
   );
 }
 

@@ -15,6 +15,7 @@ import {
   type WalletsOverview,
 } from "../lib/api";
 import { addressExplorerUrl, txExplorerUrl } from "../lib/explorer";
+import { DISPLAY_CHAIN } from "../lib/chains";
 
 const colorMap: Record<string, string> = {
   violet: "bg-slate-100 text-accent-navy",
@@ -89,7 +90,7 @@ export function AgentDetailPage() {
   const { agentId } = useParams<{ agentId: string }>();
   const [tab, setTab] = useState<Tab>("overview");
   const [agent, setAgent] = useState<AgentWalletRow | null>(null);
-  const [network, setNetwork] = useState("Arbitrum Sepolia");
+  const network = DISPLAY_CHAIN.name;
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [policy, setPolicy] = useState<AgentPolicy | undefined>();
   const [hermes, setHermes] = useState<HermesProfileStatus | null>(null);
@@ -109,7 +110,6 @@ export function AgentDetailPage() {
       .then(([wallets, tx, policies]) => {
         const found = wallets.agents.find((a) => a.id === agentId) ?? null;
         setAgent(found);
-        setNetwork(wallets.network);
         setTransactions(tx.filter((t) => t.agentId === agentId));
         setPolicy(policies.find((p) => p.agentId === agentId));
       })

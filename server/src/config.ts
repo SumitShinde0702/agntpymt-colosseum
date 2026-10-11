@@ -40,7 +40,7 @@ export const env = {
   clerkPublishableKey,
   openaiApiKey: process.env.OPENAI_API_KEY ?? "",
   openaiModel: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
-  /** AgentSpendPolicy contract on Arbitrum Sepolia; on-chain governance is skipped when unset. */
+  /** AgentSpendPolicy contract on the active SETTLEMENT_CHAIN; on-chain governance is skipped when unset. */
   spendPolicyAddress: process.env.SPEND_POLICY_ADDRESS ?? "",
   /** Policy admin + operator; pays gas for bind/request/approve/settle records. */
   spendPolicyAdminKey: (process.env.SPEND_POLICY_ADMIN_PRIVATE_KEY ?? "") as `0x${string}` | "",

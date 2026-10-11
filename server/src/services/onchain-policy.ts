@@ -1,6 +1,6 @@
 import { eq, getDb, schema, type Agent, type Vendor } from "@agntpymt/db";
 import { env } from "../config.js";
-import { txExplorerUrl } from "../chain/network.js";
+import { SETTLEMENT_CHAIN_NAME, txExplorerUrl } from "../chain/network.js";
 import {
   OnchainSpendStatus,
   SpendPolicyRevertError,
@@ -17,7 +17,7 @@ import {
 } from "../chain/spend-policy.js";
 import { logAudit } from "./audit.js";
 
-const ACTOR = "AgentSpendPolicy (Arbitrum)";
+const ACTOR = `AgentSpendPolicy (${SETTLEMENT_CHAIN_NAME})`;
 
 type RunContext = { runId: string; agentId: string; source?: string };
 
@@ -66,7 +66,7 @@ export async function authorizeOnchain(
       await logAudit({
         ...ctx,
         step: "onchain_policy_synced",
-        message: `Agent wallet bound to AgentSpendPolicy with limits synced on Arbitrum`,
+        message: `Agent wallet bound to AgentSpendPolicy with limits synced on ${SETTLEMENT_CHAIN_NAME}`,
         actor: ACTOR,
         payload: {
           txHash: sync.txHashes.at(-1),
@@ -93,8 +93,8 @@ export async function authorizeOnchain(
       ...ctx,
       step: pending ? "onchain_policy_pending" : "onchain_policy_authorized",
       message: pending
-        ? "On-chain spend request awaiting admin approval on Arbitrum"
-        : "On-chain spend authorized by AgentSpendPolicy on Arbitrum",
+        ? `On-chain spend request awaiting admin approval on ${SETTLEMENT_CHAIN_NAME}`
+        : `On-chain spend authorized by AgentSpendPolicy on ${SETTLEMENT_CHAIN_NAME}`,
       actor: ACTOR,
       payload: {
         requestId: request.requestId,
@@ -145,7 +145,7 @@ export async function approveOnchain(ctx: RunContext & { sessionId: string }): P
   await logAudit({
     ...ctx,
     step: "onchain_policy_approved",
-    message: "Admin approval recorded on-chain on Arbitrum",
+    message: `Admin approval recorded on-chain on ${SETTLEMENT_CHAIN_NAME}`,
     actor: ACTOR,
     payload: { requestId, txHash, explorerUrl: txExplorerUrl(txHash) },
   });
@@ -161,7 +161,7 @@ export async function cancelOnchain(ctx: RunContext & { sessionId: string }): Pr
     await logAudit({
       ...ctx,
       step: "onchain_policy_rejected",
-      message: "Spend request rejected on-chain on Arbitrum",
+      message: `Spend request rejected on-chain on ${SETTLEMENT_CHAIN_NAME}`,
       actor: ACTOR,
       payload: { requestId, txHash, explorerUrl: txExplorerUrl(txHash) },
     });
@@ -182,7 +182,7 @@ export async function recordOnchainSettlement(
     await logAudit({
       ...ctx,
       step: "onchain_policy_settled",
-      message: "Settlement recorded on-chain by AgentSpendPolicy on Arbitrum",
+      message: `Settlement recorded on-chain by AgentSpendPolicy on ${SETTLEMENT_CHAIN_NAME}`,
       actor: ACTOR,
       payload: { requestId, txHash, settlementRef: ctx.settlementRef, explorerUrl: txExplorerUrl(txHash) },
     });

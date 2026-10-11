@@ -8,6 +8,7 @@ import {
   Clock,
   Shield,
   Settings,
+  Plug,
   FileText,
   Sun,
   ChevronDown,
@@ -18,6 +19,7 @@ import { AuthControls } from "../auth/AuthControls";
 import { ApprovalToast } from "./ApprovalToast";
 import { Logo } from "../brand/Logo";
 import { showSellerAdmin } from "../../lib/features";
+import { DISPLAY_CHAIN } from "../../lib/chains";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -27,6 +29,7 @@ const nav = [
   { to: "/payments", label: "Payments", icon: CreditCard },
   { to: "/approvals", label: "Approvals", icon: Clock, badge: true },
   { to: "/policies", label: "Policies", icon: Shield },
+  { to: "/connect", label: "Connect Agent", icon: Plug },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -102,7 +105,7 @@ export function AppLayout() {
               <span className="text-slate-500">Network</span>
               <span className="flex items-center gap-1.5 font-medium text-slate-800">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                {health?.network ?? "Arbitrum Sepolia"}
+                {DISPLAY_CHAIN.name}
               </span>
             </div>
             <div className="mb-3 flex items-center justify-between">
@@ -159,7 +162,7 @@ export function AppLayout() {
                   <div className="flex items-center justify-between py-1">
                     <span className="text-slate-500">Payment mode</span>
                     <span className="font-medium text-slate-800">
-                      {health?.simulatePayments ? "Simulated" : `x402 · ${health?.network ?? ""}`}
+                      {health?.simulatePayments ? "Simulated" : `x402 · ${DISPLAY_CHAIN.name}`}
                     </span>
                   </div>
                 </div>

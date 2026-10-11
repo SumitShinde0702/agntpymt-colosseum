@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_NAME: string;
   readonly VITE_CLERK_PUBLISHABLE_KEY: string;
   readonly VITE_WALLETCONNECT_PROJECT_ID: string;
+  readonly SETTLEMENT_CHAIN?: string;
 }
 
 interface ImportMeta {

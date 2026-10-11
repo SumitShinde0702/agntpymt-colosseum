@@ -4,17 +4,18 @@ import { api, type WalletsOverview } from "../lib/api";
 import { TreasuryCard } from "../components/wallets/TreasuryCard";
 import { AgentWalletsTable } from "../components/wallets/AgentWalletsTable";
 import { PageSkeleton } from "../components/ui/Skeleton";
+import { DISPLAY_CHAIN } from "../lib/chains";
 
 const FAUCETS = [
   {
-    name: "Arbitrum Sepolia ETH Faucet",
-    url: "https://www.alchemy.com/faucets/arbitrum-sepolia",
-    desc: "Free Arbitrum Sepolia ETH for gas — no mainnet ETH required",
+    name: `${DISPLAY_CHAIN.name} ${DISPLAY_CHAIN.gasToken} Faucet`,
+    url: DISPLAY_CHAIN.gasFaucetUrl,
+    desc: `Free ${DISPLAY_CHAIN.name} ${DISPLAY_CHAIN.gasToken} for gas — no mainnet funds required`,
   },
   {
     name: "Circle USDC Faucet",
     url: "https://faucet.circle.com/",
-    desc: "Free Arbitrum Sepolia USDC for payments (select Arbitrum Sepolia)",
+    desc: `Free ${DISPLAY_CHAIN.usdcLabel} for payments (select ${DISPLAY_CHAIN.name})`,
   },
 ];
 
@@ -59,7 +60,7 @@ export function WalletsPage() {
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-4">
           <div className="text-xs text-slate-500">Network</div>
-          <div className="text-lg font-semibold">{data.network}</div>
+          <div className="text-lg font-semibold">{DISPLAY_CHAIN.name}</div>
         </div>
       </div>
 
@@ -68,7 +69,7 @@ export function WalletsPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-5">
         <h2 className="mb-1 font-semibold">Fund your treasury first</h2>
         <p className="mb-3 text-xs text-slate-500">
-          Use free Arbitrum Sepolia test funds only — never mainnet ETH. After the faucet, use{" "}
+          Use free {DISPLAY_CHAIN.name} test funds only — never mainnet funds. After the faucet, use{" "}
           <strong>ETH gas</strong> / <strong>USDC</strong> on each agent row.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">

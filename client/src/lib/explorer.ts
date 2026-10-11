@@ -1,9 +1,12 @@
-export const ARBITRUM_SEPOLIA_EXPLORER = "https://sepolia.arbiscan.io";
+import { ACTIVE_CHAIN } from "./chains";
+
+export const EXPLORER_URL = ACTIVE_CHAIN.explorerUrl;
+export const EXPLORER_NAME = ACTIVE_CHAIN.explorerName;
 
 export function txExplorerUrl(txHash: string) {
-  return `${ARBITRUM_SEPOLIA_EXPLORER}/tx/${txHash}`;
+  return `${EXPLORER_URL}/tx/${txHash}`;
 }
 
 export function addressExplorerUrl(address: string) {
-  return `${ARBITRUM_SEPOLIA_EXPLORER}/address/${address}`;
+  return `${EXPLORER_URL}/address/${address}`;
 }

@@ -19,6 +19,7 @@ import {
   reputationRegistryExplorerUrl,
 } from "../../lib/erc8004";
 import { addressExplorerUrl, txExplorerUrl } from "../../lib/explorer";
+import { TARGET_CHAIN_NAME } from "../../lib/wagmi";
 import type { Erc8004AgentStatus } from "../../lib/api";
 
 type Props = {
@@ -263,7 +264,7 @@ export function Erc8004Panel({
     {
       id: "register",
       title: "Mint identity NFT",
-      description: "Treasury signs register() — creates ERC-8004 Agent ID on Arbitrum Sepolia.",
+      description: `Treasury signs register() — creates ERC-8004 Agent ID on ${TARGET_CHAIN_NAME}.`,
       who: "Treasury MetaMask",
       state: stepState(registerDone, currentStep === "register"),
       txHash: status.registerTx,

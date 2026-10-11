@@ -2,17 +2,18 @@ import fs from "node:fs";
 import path from "node:path";
 import { ethers, network } from "hardhat";
 
-const ARBITRUM_SEPOLIA_USDC = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
+const USDC_BY_CHAIN: Record<string, string> = {
+  "421614": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+  "84532": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+};
 
 async function main() {
   const [deployer] = await ethers.getSigners();
   const { chainId } = await ethers.provider.getNetwork();
   console.log(`Deploying to ${network.name} (${chainId}) from ${deployer.address}`);
 
-  let tokenAddress: string;
-  if (chainId === 421614n) {
-    tokenAddress = ARBITRUM_SEPOLIA_USDC;
-  } else {
+  let tokenAddress = USDC_BY_CHAIN[chainId.toString()];
+  if (!tokenAddress) {
     const mock = await ethers.deployContract("MockUSDC");
     await mock.waitForDeployment();
     tokenAddress = await mock.getAddress();

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, ArrowRight, Shield, ShieldOff } from "lucide-react";
+import { AlertTriangle, ArrowRight, Check, Shield, ShieldOff } from "lucide-react";
 import { api, type OrgSettings } from "../lib/api";
+import { DISPLAY_CHAIN, DISPLAY_CHAINS, setDisplayChain } from "../lib/chains";
 import { Spinner } from "../components/ui/Skeleton";
 
 function toNullableNumber(value: string): number | null {
@@ -104,6 +105,46 @@ export function SettingsPage() {
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
+
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-800">Settlement network</h2>
+          <p className="text-xs text-slate-500">
+            Chain your agents settle USDC on. Policy, approvals and the kill switch apply the same on every
+            chain.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="grid gap-3 sm:grid-cols-3">
+            {DISPLAY_CHAINS.map((chain) => {
+              const selected = chain.key === DISPLAY_CHAIN.key;
+              return (
+                <button
+                  key={chain.key}
+                  type="button"
+                  onClick={() => {
+                    if (!selected) setDisplayChain(chain.key);
+                  }}
+                  aria-pressed={selected}
+                  className={`flex items-start justify-between gap-3 rounded-xl border-2 p-4 text-left transition ${
+                    selected
+                      ? "border-[#00a8e8] bg-[#00a8e8]/5"
+                      : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                  }`}
+                >
+                  <div>
+                    <div className="font-semibold text-slate-900">{chain.name}</div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      {chain.family} · {chain.usdcLabel} · {chain.gasToken} gas
+                    </div>
+                  </div>
+                  {selected && <Check className="h-5 w-5 shrink-0 text-[#00a8e8]" />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       <section className="space-y-3">
         <div>

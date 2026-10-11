@@ -36,8 +36,21 @@ import { vendorErc8004Router } from "./vendor-erc8004.js";
 import { getVendorErc8004Status } from "../services/vendor-erc8004.js";
 import { listPaymentsForOrg, paymentsToCsv } from "../services/transactions.js";
 import { getOrgSettings, updateOrgSettings } from "../services/org-settings.js";
+import { MCP_TOOLS } from "../mcp/create-server.js";
 
 export const apiRouter = Router();
+
+apiRouter.get("/integrations/mcp", (req, res) => {
+  const base = env.agntpymtPublicUrl.trim()
+    ? env.agntpymtPublicUrl.replace(/\/$/, "")
+    : `${req.protocol}://${req.get("host")}`;
+  res.json({
+    serverName: "agntpymt",
+    mcpUrl: `${base}/mcp`,
+    serviceKey: env.mcpServiceKey,
+    tools: MCP_TOOLS.map((t) => ({ name: t.name, description: t.description ?? "" })),
+  });
+});
 
 apiRouter.get("/me", async (req, res) => {
   const orgId = getOrgId(req);

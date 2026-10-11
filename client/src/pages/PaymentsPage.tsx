@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Download, ExternalLink, RefreshCw } from "lucide-react";
 import { api, downloadPaymentsCsv, type Transaction } from "../lib/api";
 import { txExplorerUrl } from "../lib/explorer";
+import { DISPLAY_CHAIN } from "../lib/chains";
 import { Skeleton } from "../components/ui/Skeleton";
 
 function formatWhen(iso: string) {
@@ -76,7 +77,7 @@ export function PaymentsPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Payments</h1>
           <p className="mt-1 text-slate-500">
-            All agent settlements — x402 USDC on Arbitrum Sepolia with on-chain seller ratings.
+            All agent settlements — x402 USDC on {DISPLAY_CHAIN.name} with on-chain seller ratings.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -117,7 +118,7 @@ export function PaymentsPage() {
           </div>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Governed on Arbitrum</div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Governed on {DISPLAY_CHAIN.name}</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">
             {payments.filter((p) => p.policyTxHash).length}
           </div>

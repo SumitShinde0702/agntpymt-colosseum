@@ -1,5 +1,9 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+  type Tool,
+} from "@modelcontextprotocol/sdk/types.js";
 import {
   mcpExecutePurchase,
   mcpGetAgentPolicy,
@@ -9,67 +13,67 @@ import {
   resolveRunId,
 } from "./tools.js";
 
-export function createAgnTpymtMcpServer(): Server {
-  const server = new Server({ name: "agntpymt", version: "0.3.0" }, { capabilities: { tools: {} } });
-
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: [
-      {
-        name: "agntpymt_get_agent_policy",
-        description: "Returns agent identity, wallet, and auto-approve spend limit",
-        inputSchema: {
-          type: "object",
-          properties: { agentId: { type: "string" }, runId: { type: "string" } },
-        },
+export const MCP_TOOLS: Tool[] = [
+  {
+    name: "agntpymt_get_agent_policy",
+    description: "Returns agent identity, wallet, and auto-approve spend limit",
+    inputSchema: {
+      type: "object",
+      properties: { agentId: { type: "string" }, runId: { type: "string" } },
+    },
+  },
+  {
+    name: "agntpymt_initiate_purchase",
+    description: "Initiate a purchase with vendor matching, policy enforcement, and settlement",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agentId: { type: "string" },
+        runId: { type: "string" },
+        purchaseIntent: { type: "string" },
+        task: { type: "string" },
+        category: { type: "string" },
+        maxBudget: { type: "number" },
       },
-      {
-        name: "agntpymt_initiate_purchase",
-        description: "Initiate a purchase with vendor matching, policy enforcement, and settlement",
-        inputSchema: {
-          type: "object",
-          properties: {
-            agentId: { type: "string" },
-            runId: { type: "string" },
-            purchaseIntent: { type: "string" },
-            task: { type: "string" },
-            category: { type: "string" },
-            maxBudget: { type: "number" },
-          },
-          required: ["purchaseIntent"],
-        },
+      required: ["purchaseIntent"],
+    },
+  },
+  {
+    name: "agntpymt_request_paid_resource",
+    description: "Request premium-data or premium-compute through AgntPymt payment governance",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agentId: { type: "string" },
+        runId: { type: "string" },
+        resourceId: { type: "string" },
+        resource_id: { type: "string", enum: ["premium-data", "premium-compute"] },
+        task: { type: "string" },
+        reason: { type: "string" },
       },
-      {
-        name: "agntpymt_request_paid_resource",
-        description: "Request premium-data or premium-compute through AgntPymt payment governance",
-        inputSchema: {
-          type: "object",
-          properties: {
-            agentId: { type: "string" },
-            runId: { type: "string" },
-            resourceId: { type: "string" },
-            resource_id: { type: "string", enum: ["premium-data", "premium-compute"] },
-            task: { type: "string" },
-            reason: { type: "string" },
-          },
-        },
-      },
-      {
-        name: "agntpymt_list_pending_approvals",
-        description: "List pending payment approvals",
-        inputSchema: { type: "object", properties: { agentId: { type: "string" } } },
-      },
-      {
-        name: "agntpymt_list_transactions",
-        description: "Audit ledger of agent payment activity",
-        inputSchema: { type: "object", properties: { agentId: { type: "string" } } },
-      },
-      {
+    },
+  },
+  {
+    name: "agntpymt_list_pending_approvals",
+    description: "List pending payment approvals",
+    inputSchema: { type: "object", properties: { agentId: { type: "string" } } },
+  },
+  {
+    name: "agntpymt_list_transactions",
+    description: "Audit ledger of agent payment activity",
+    inputSchema: { type: "object", properties: { agentId: { type: "string" } } },
+  },
+  {
         name: "agntpymt_list_agents",
         description: "List agents in the org (uses MCP agent scope)",
         inputSchema: { type: "object", properties: {} },
       },
-    ],
-  }));
+];
+
+export function createAgnTpymtMcpServer(): Server {
+  const server = new Server({ name: "agntpymt", version: "0.3.0" }, { capabilities: { tools: {} } });
+
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: MCP_TOOLS }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;

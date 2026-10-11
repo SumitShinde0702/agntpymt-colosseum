@@ -11,12 +11,16 @@ import {
   FileText,
   Fingerprint,
   GitBranch,
+  Handshake,
   Layers,
   Lock,
   Minus,
+  Plug,
   Scale,
   Shield,
   ShieldAlert,
+  Terminal,
+  Trophy,
   UserCheck,
   X,
   Zap,
@@ -25,6 +29,40 @@ import { AuthControls } from "../components/auth/AuthControls";
 import { Logo } from "../components/brand/Logo";
 
 const clerkEnabled = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY);
+
+const PILOT_MAILTO = "mailto:info@agntpymt.com?subject=AgntPymt%20design%20partner%20pilot";
+
+const traction = [
+  {
+    icon: Trophy,
+    value: "Ripple Aquarium",
+    label: "Selected for Ripple's Aquarium program.",
+  },
+  {
+    icon: BadgeCheck,
+    value: "3 chains live",
+    label: "Deployed on Arbitrum Sepolia, Robinhood Chain testnet, and Base Sepolia.",
+  },
+  {
+    icon: Plug,
+    value: "6 MCP tools",
+    label: "Any MCP-capable agent can pay through the gateway today. No SDK required.",
+  },
+  {
+    icon: Handshake,
+    value: "3 pilot slots",
+    label: "Opening for December: design partners in BFSI, fintech, and crypto.",
+  },
+];
+
+const onboardingPrompt = `Connect yourself to AgntPymt so every payment you make follows our company's spend policy.
+
+1. Add an MCP server named "agntpymt":
+   URL: https://<your-gateway-host>/mcp
+   Header: Authorization: Bearer $AGNTPYMT_MCP_KEY (read it from the environment)
+2. Call agntpymt_get_agent_policy with agentId "<your-agent-id>" and tell me your spend limits.
+3. From now on, make every purchase with agntpymt_initiate_purchase. Never pay a vendor any other way.
+4. Never ask me to paste a private key or API key into this chat.`;
 
 const problems = [
   {
@@ -85,7 +123,7 @@ const pillars = [
     icon: Shield,
     title: "Programmable spend policy",
     description:
-      "Caps, vendor allowlists, and a kill switch are enforced on-chain by AgentSpendPolicy before funds can move.",
+      "Auto-approve thresholds, 24-hour caps, an org-wide ceiling, and a kill switch are enforced by the gateway before any payment is signed.",
   },
   {
     icon: UserCheck,
@@ -95,30 +133,36 @@ const pillars = [
   },
   {
     icon: FileText,
-    title: "Immutable audit ledger",
+    title: "Regulator-grade audit trail",
     description:
-      "Bind, authorize, approve, settle, cancel, and reject events are recorded on-chain so compliance can reconstruct every spend.",
+      "Every authorize, approve, settle, and reject decision is logged with its settlement hash, and can be anchored on Arbitrum for independent verification.",
   },
   {
     icon: Zap,
     title: "Rail-agnostic settlement",
     description:
-      "x402 micropayments in USDC on Arbitrum today. The control plane stays the same as rails expand.",
+      "x402 micropayments in USDC on Arbitrum today, with more EVM chains and XRPL next. The control plane stays the same as rails expand.",
+  },
+  {
+    icon: Building2,
+    title: "Runs on your servers",
+    description:
+      "Deploy the gateway in your own cloud or data centre. Agent keys stay with you, and AgntPymt never holds or moves your funds.",
   },
 ];
 
 const controlSteps = [
   {
     title: "Agent requests",
-    detail: "An agent proposes a purchase — an API call, a dataset, or a vendor invoice.",
+    detail: "An agent proposes a purchase over MCP — an API call, a dataset, or a vendor invoice.",
   },
   {
     title: "Policy decides",
-    detail: "AgntPymt checks identity, spend cap, allowlist, and whether a human must approve.",
+    detail: "The gateway checks identity, spend caps, the kill switch, and whether a human must approve.",
   },
   {
     title: "Settle and log",
-    detail: "The payment clears in USDC and the decision is written to an immutable audit trail.",
+    detail: "The payment clears in USDC and the decision is written to the audit trail, optionally anchored on Arbitrum.",
   },
 ];
 
@@ -199,7 +243,7 @@ const marketTiles = [
 ];
 
 const roadmap = [
-  { year: "Today", title: "Pilot governance", detail: "Prove spend policy, identity, and audit on live Arbitrum contracts." },
+  { year: "Today", title: "Pilot governance", detail: "Run the self-hosted gateway with design partners, settling USDC on Arbitrum." },
   { year: "2027", title: "Enterprise standard", detail: "The control layer every regulated org requires before production agents." },
   { year: "2030", title: "Default M2M rail", detail: "The Visa moment for machine-to-machine payments — built for enterprises first." },
 ];
@@ -211,7 +255,13 @@ const compareRows: { capability: string; consumer: CompareCell; traditional: Com
     capability: "Org-level policy engine",
     consumer: { kind: "partial", text: "Checkout rules" },
     traditional: { kind: "yes", text: "Human cards" },
-    agntpymt: { kind: "yes", text: "Per-agent, on-chain" },
+    agntpymt: { kind: "yes", text: "Per-agent, enforced in code" },
+  },
+  {
+    capability: "Self-hosted, non-custodial",
+    consumer: { kind: "no", text: "Vendor cloud" },
+    traditional: { kind: "no", text: "Issuer holds funds" },
+    agntpymt: { kind: "yes", text: "Your servers, your keys" },
   },
   {
     capability: "Agent identity",
@@ -232,10 +282,10 @@ const compareRows: { capability: string; consumer: CompareCell; traditional: Com
     agntpymt: { kind: "yes", text: "Threshold routing" },
   },
   {
-    capability: "Immutable audit",
+    capability: "Regulator-grade audit",
     consumer: { kind: "no", text: "Merchant logs" },
     traditional: { kind: "partial", text: "ERP export" },
-    agntpymt: { kind: "yes", text: "On-chain ledger" },
+    agntpymt: { kind: "yes", text: "Audit log + on-chain anchor" },
   },
   {
     capability: "Compliance readiness",
@@ -255,17 +305,17 @@ const moats = [
   {
     icon: Lock,
     title: "Enforced, not trusted",
-    detail: "Policy lives on-chain. Agents cannot bypass a cap, an allowlist, or a kill switch.",
+    detail: "Limits are checked before a payment is signed, and the agent never holds the key. No prompt can talk its way past a cap or the kill switch.",
   },
   {
     icon: Layers,
     title: "Rail-agnostic control plane",
-    detail: "x402 and USDC on Arbitrum today. The same governance layer as settlement rails change.",
+    detail: "x402 and USDC on Arbitrum today, more EVM chains and XRPL next. The same governance layer as settlement rails change.",
   },
   {
     icon: Scale,
     title: "Compliance-first by design",
-    detail: "Identity, approvals, and an immutable trail are the product — not a later add-on.",
+    detail: "Identity, approvals, and the audit trail are the product — not a later add-on.",
   },
 ];
 
@@ -294,6 +344,31 @@ function CopyAddressButton({ address }: { address: string }) {
       aria-label={copied ? "Address copied" : `Copy contract address ${address}`}
     >
       {copied ? <Check className="h-4 w-4 text-emerald-400" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
+    </button>
+  );
+}
+
+function CopyPromptButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      /* clipboard may be unavailable; fail closed */
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => void handleCopy()}
+      className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-slate-200 transition duration-200 hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+    >
+      {copied ? <Check className="h-4 w-4 text-emerald-400" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
+      <span aria-live="polite">{copied ? "Copied" : "Copy prompt"}</span>
     </button>
   );
 }
@@ -368,19 +443,23 @@ export function LandingPage() {
         <section className="relative overflow-hidden px-6 pb-24 pt-16">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-500/20 via-transparent to-transparent" />
           <div className="relative mx-auto max-w-4xl text-center">
-            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/10 px-4 py-1.5 text-sm text-brand-100">
-              <Building2 className="h-4 w-4" aria-hidden />
-              Built for BFSI, Fintech and Supply Chain
-            </p>
+            <a
+              href="#traction"
+              className="mb-6 inline-flex cursor-pointer items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/10 px-4 py-1.5 text-sm text-brand-100 transition duration-200 hover:border-brand-400/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+            >
+              <Trophy className="h-4 w-4" aria-hidden />
+              Selected for Ripple&apos;s Aquarium
+            </a>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Your agents are moving fast.
+              Let your AI agents spend.
               <span className="mt-2 block bg-gradient-to-r from-brand-400 to-cyan-200 bg-clip-text text-transparent">
-                Your controls should too.
+                Without losing control.
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-400">
-              The enterprise control layer for autonomous agent payments: policy, identity,
-              and an immutable audit trail, built for regulated industries.
+              AgntPymt is the self-hosted payment gateway for enterprise AI agents. Spend limits,
+              human approvals, and a regulator-grade audit trail, running on your own servers and
+              settling in stablecoins.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <DemoLink className="btn-primary-lg cursor-pointer">
@@ -388,24 +467,24 @@ export function LandingPage() {
                 <ArrowRight className="h-5 w-5" aria-hidden />
               </DemoLink>
               <a
-                href="#why-it-matters"
+                href="#pilot"
                 className="cursor-pointer rounded-xl border border-white/15 px-6 py-3 text-base font-medium text-slate-300 transition duration-200 hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
               >
-                Why it matters
+                Become a design partner
               </a>
             </div>
             <ul className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-slate-400">
               <li className="flex items-center gap-2">
                 <Lock className="h-4 w-4 text-brand-400" aria-hidden />
-                SOC2-ready architecture
+                Self-hosted, non-custodial
               </li>
               <li className="flex items-center gap-2">
                 <Shield className="h-4 w-4 text-brand-400" aria-hidden />
-                On-chain policy enforcement
+                Policy before every payment
               </li>
               <li className="flex items-center gap-2">
                 <BadgeCheck className="h-4 w-4 text-brand-400" aria-hidden />
-                Immutable audit
+                Plugs into any agent via MCP
               </li>
               <li>
                 <a
@@ -413,9 +492,31 @@ export function LandingPage() {
                   className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/10 px-3 py-1.5 text-brand-100 transition duration-200 hover:border-brand-400/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
                 >
                   <GitBranch className="h-4 w-4" aria-hidden />
-                  On-chain on Arbitrum
+                  Settles on Arbitrum
                 </a>
               </li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="traction" className="border-t border-white/10 px-6 py-16 scroll-mt-24">
+          <div className="mx-auto max-w-6xl">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-brand-400">
+              Traction
+            </p>
+            <h2 className="mt-3 text-center text-3xl font-bold tracking-tight sm:text-4xl">
+              Early proof. Shipping fast.
+            </h2>
+            <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {traction.map(({ icon: Icon, value, label }) => (
+                <li key={value} className="rounded-2xl border border-white/10 bg-slate-900/80 p-6">
+                  <Icon className="h-5 w-5 text-brand-400" aria-hidden />
+                  <p className="mt-4 bg-gradient-to-r from-brand-400 to-cyan-200 bg-clip-text text-2xl font-bold tracking-tight text-transparent">
+                    {value}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{label}</p>
+                </li>
+              ))}
             </ul>
           </div>
         </section>
@@ -432,6 +533,11 @@ export function LandingPage() {
               Consumer agent checkout is getting the headlines. Regulated enterprises still cannot
               put a wallet in an agent&apos;s hands without identity, policy, and proof.
             </p>
+            <blockquote className="mx-auto mt-10 max-w-3xl border-l-4 border-brand-500 pl-6 text-left text-xl font-medium leading-relaxed text-white sm:text-2xl">
+              Telling an AI &ldquo;don&apos;t spend more than $10&rdquo; is a suggestion, not a control.
+              Models hallucinate, get prompt-injected, and misread instructions. With a funded wallet,
+              one bad output is a payment you can&apos;t undo.
+            </blockquote>
             <div className="mt-14 grid gap-6 md:grid-cols-3">
               {problems.map(({ icon: Icon, title, description }) => (
                 <div key={title} className="rounded-2xl border border-white/10 bg-slate-900 p-6">
@@ -497,7 +603,38 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="px-6 py-24 scroll-mt-24">
+        <section id="connect" className="px-6 py-24 scroll-mt-24">
+          <div className="mx-auto max-w-4xl">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-brand-400">
+              Onboarding
+            </p>
+            <h2 className="mt-3 text-center text-3xl font-bold tracking-tight sm:text-4xl">
+              One prompt. Your agent is governed.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-center text-slate-400">
+              No SDK and no integration project. Paste this into Claude, Cursor, Hermes, or any
+              MCP-capable agent, then set its limits in the dashboard. The agent can read its limits,
+              but only a human can change them.
+            </p>
+            <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-slate-900">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-3">
+                <span className="inline-flex items-center gap-2 text-sm text-slate-400">
+                  <Terminal className="h-4 w-4 text-brand-400" aria-hidden />
+                  Setup prompt
+                  <span className="rounded-md bg-brand-500/15 px-2 py-0.5 text-xs font-medium text-brand-200">
+                    Early access
+                  </span>
+                </span>
+                <CopyPromptButton text={onboardingPrompt} />
+              </div>
+              <pre className="overflow-x-auto whitespace-pre-wrap p-5 font-mono text-sm leading-relaxed text-slate-200">
+                {onboardingPrompt}
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="how-it-works" className="border-t border-white/10 bg-slate-900/50 px-6 py-24 scroll-mt-24">
           <div className="mx-auto max-w-4xl">
             <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-brand-400">
               How it works
@@ -546,7 +683,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="live-on-arbitrum" className="border-t border-white/10 bg-slate-900/50 px-6 py-24 scroll-mt-24">
+        <section id="live-on-arbitrum" className="border-t border-white/10 px-6 py-24 scroll-mt-24">
           <div className="mx-auto max-w-6xl">
             <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-brand-400">
               Live on Arbitrum
@@ -555,8 +692,9 @@ export function LandingPage() {
               Not a mockup. Deployed and verified.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-slate-400">
-              AgentSpendPolicy is live on two Arbitrum chains. Judges can open the explorers
-              and read the source — this is real policy enforcement, not a slide.
+              Agent payments settle in USDC on Arbitrum. For enterprises that want an independent
+              audit trail, the gateway mirrors every decision to AgentSpendPolicy, live and
+              source-verified on two Arbitrum chains.
             </p>
             <div className="mt-14 grid gap-6 lg:grid-cols-2">
               {deployments.map((d) => (
@@ -607,12 +745,12 @@ export function LandingPage() {
               ))}
             </div>
             <p className="mt-8 text-center text-sm text-slate-400">
-              The contract enforces {policyEvents.join(" · ").toLowerCase()}.
+              The contract re-checks limits and records {policyEvents.join(" · ").toLowerCase()}.
             </p>
           </div>
         </section>
 
-        <section className="px-6 py-24">
+        <section className="border-t border-white/10 bg-slate-900/50 px-6 py-24">
           <div className="mx-auto max-w-6xl">
             <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-brand-400">
               The potential
@@ -648,7 +786,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-slate-900/50 px-6 py-24">
+        <section className="border-t border-white/10 px-6 py-24">
           <div className="mx-auto max-w-6xl">
             <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-brand-400">
               Competitive advantage
@@ -713,26 +851,30 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-gradient-to-b from-slate-900 to-slate-950 px-6 py-24">
+        <section
+          id="pilot"
+          className="border-t border-white/10 bg-gradient-to-b from-slate-900 to-slate-950 px-6 py-24 scroll-mt-24"
+        >
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Govern every agent transaction, starting today.
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-400">
+              Design partners
+            </p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              Be one of our first three design partners.
             </h2>
             <p className="mt-4 text-slate-400">
-              The live demo runs with pre-seeded agents, vendors, and policy paths. See
-              auto-approve, micropay, and human escalation — then open the verified contracts.
+              We&apos;re opening three pilot slots for December: a 4–8 week proof of value around one
+              agent payment flow, with your policy rules, approvals, and audit receipts, running on
+              your own infrastructure.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <DemoLink className="btn-primary-lg cursor-pointer px-8 py-3.5">
-                Launch live demo
+              <a href={PILOT_MAILTO} className="btn-primary-lg cursor-pointer px-8 py-3.5">
+                Book a pilot
                 <ArrowRight className="h-5 w-5" aria-hidden />
-              </DemoLink>
-              <a
-                href="mailto:hello@agntpymt.com"
-                className="cursor-pointer rounded-xl border border-white/15 px-6 py-3 text-base font-medium text-slate-300 transition duration-200 hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
-              >
-                Talk to us
               </a>
+              <DemoLink className="cursor-pointer rounded-xl border border-white/15 px-6 py-3 text-base font-medium text-slate-300 transition duration-200 hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">
+                Launch live demo
+              </DemoLink>
             </div>
           </div>
         </section>

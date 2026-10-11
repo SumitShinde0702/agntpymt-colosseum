@@ -509,7 +509,7 @@ export async function settlePurchase(params: {
       const hint = reason.includes("Insufficient USDC")
         ? ` Fund the agent wallet with ${SETTLEMENT_CHAIN_NAME} USDC on the Wallets page.`
         : reason.includes(`${SETTLEMENT_CHAIN_NAME} ETH`) || reason.includes("needs testnet ETH")
-        ? " Fund ETH gas on the Wallets page (Arbitrum Sepolia faucet → treasury → agent ETH gas)."
+        ? ` Fund ETH gas on the Wallets page (${SETTLEMENT_CHAIN_NAME} faucet → treasury → agent ETH gas).`
         : reason.includes("(402)")
           ? " Open Wallets → fund the running agent with more USDC + ETH, then retry."
           : reason.includes("not registered")

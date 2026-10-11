@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { RunEvent } from "../../lib/api";
 import { txExplorerUrl } from "../../lib/explorer";
+import { DISPLAY_CHAIN } from "../../lib/chains";
 import { ChatMarkdown } from "./ChatMarkdown";
 
 type ChatRole = "buyer" | "seller" | "system" | "hermes_tool";
@@ -34,11 +35,11 @@ const STEP_LABELS: Record<string, string> = {
   payment_denied: "Payment denied",
   policy_denied: "Denied by policy",
   onchain_policy_synced: "On-chain policy synced",
-  onchain_policy_authorized: "Authorized on Arbitrum",
+  onchain_policy_authorized: `Authorized on ${DISPLAY_CHAIN.name}`,
   onchain_policy_pending: "On-chain approval required",
-  onchain_policy_approved: "Approved on Arbitrum",
-  onchain_policy_rejected: "Rejected on Arbitrum",
-  onchain_policy_settled: "Settlement recorded on Arbitrum",
+  onchain_policy_approved: `Approved on ${DISPLAY_CHAIN.name}`,
+  onchain_policy_rejected: `Rejected on ${DISPLAY_CHAIN.name}`,
+  onchain_policy_settled: `Settlement recorded on ${DISPLAY_CHAIN.name}`,
   onchain_policy_denied: "Denied by on-chain policy",
   onchain_policy_unavailable: "On-chain policy unavailable",
   order_fulfilled: "Order delivered",

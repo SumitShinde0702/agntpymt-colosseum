@@ -15,6 +15,7 @@ import { PaymentsPage } from "./pages/PaymentsPage";
 import { LogsPage } from "./pages/LogsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { PoliciesPage } from "./pages/PoliciesPage";
+import { ConnectAgentPage } from "./pages/ConnectAgentPage";
 import { showSellerAdmin } from "./lib/features";
 
 const clerkEnabled = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY);
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="payments" element={<PaymentsPage />} />
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="policies" element={<PoliciesPage />} />
+          <Route path="connect" element={<ConnectAgentPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="logs" element={<LogsPage />} />
         </Route>

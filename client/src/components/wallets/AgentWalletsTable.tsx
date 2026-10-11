@@ -1,6 +1,7 @@
 import { Copy, Bot } from "lucide-react";
 import type { AgentWalletRow } from "../../lib/api";
 import { AgentWalletFund } from "./AgentWalletFund";
+import { DISPLAY_CHAIN } from "../../lib/chains";
 
 const colorMap: Record<string, string> = {
   violet: "bg-slate-100 text-accent-navy",
@@ -100,9 +101,9 @@ export function AgentWalletsTable({ agents, treasuryAddress, onFunded }: Props) 
       </div>
       {treasuryAddress && (
         <div className="border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
-          <strong>USDC</strong> — payment balance. <strong>ETH gas</strong> — sends free Arbitrum Sepolia
-          ETH from treasury (default 0.001) so the agent can sign payments. Fund treasury from the
-          Arbitrum Sepolia faucet below (no mainnet ETH).
+          <strong>USDC</strong> — payment balance. <strong>{DISPLAY_CHAIN.gasToken} gas</strong> — sends free{" "}
+          {DISPLAY_CHAIN.name} {DISPLAY_CHAIN.gasToken} from treasury so the agent can sign payments. Fund
+          treasury from the {DISPLAY_CHAIN.name} faucet below (no mainnet funds).
         </div>
       )}
     </div>

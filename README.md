@@ -1,21 +1,23 @@
 <div align="center">
 
-<img src="docs/assets/banner.svg" alt="AgntPymt: governed payments for AI agents, enforced on Arbitrum" width="100%" />
+<img src="docs/assets/banner.svg" alt="AgntPymt: governed stablecoin payments for AI agents, self-hosted" width="100%" />
 
 <a href="https://github.com/SumitShinde0702/agntpymt-arbitrum">
-  <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=22&duration=3000&pause=900&color=00A8E8&center=true&vCenter=true&width=760&lines=You+can't+prompt+your+way+to+compliance.;Rules+in+code%2C+not+in+prompts.;Every+agent+payment+goes+through+policy.;Consumer+agents+need+a+wallet.+Enterprise+agents+need+a+rulebook." alt="Typing tagline" />
+  <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=22&duration=3000&pause=900&color=00A8E8&center=true&vCenter=true&width=760&lines=You+can't+prompt+your+way+to+compliance.;Rules+in+code%2C+not+in+prompts.;Your+servers.+Your+keys.+Your+rules.;Consumer+agents+need+a+wallet.+Enterprise+agents+need+a+rulebook." alt="Typing tagline" />
 </a>
 
 <p>
-  <a href="https://sepolia.arbiscan.io/address/0x542A4322762b255f8bA53F6A236B6191c8Cd0e1c"><img src="https://img.shields.io/badge/Arbitrum_Sepolia-deployed-12AAFF?style=for-the-badge&logo=ethereum&logoColor=white" alt="Deployed on Arbitrum Sepolia" /></a>
+  <a href="https://sepolia.arbiscan.io/address/0x542A4322762b255f8bA53F6A236B6191c8Cd0e1c"><img src="https://img.shields.io/badge/Arbitrum_Sepolia-USDC_settlement_%2B_audit-12AAFF?style=for-the-badge&logo=ethereum&logoColor=white" alt="USDC settlement and audit anchor on Arbitrum Sepolia" /></a>
   <a href="https://explorer.testnet.chain.robinhood.com/address/0x7F67212561DcD231a9316a54A4A336F7059A4234#code"><img src="https://img.shields.io/badge/Robinhood_Chain-deployed-00C805?style=for-the-badge&logo=robinhood&logoColor=white" alt="Deployed on Robinhood Chain testnet" /></a>
   <a href="https://repo.sourcify.dev/421614/0x542A4322762b255f8bA53F6A236B6191c8Cd0e1c"><img src="https://img.shields.io/badge/Source-verified-34D399?style=for-the-badge&logo=checkmarx&logoColor=white" alt="Source verified on Sourcify" /></a>
 </p>
 
 <p>
-  <img src="https://img.shields.io/badge/Solidity-0.8.24-363636?style=flat-square&logo=solidity" alt="Solidity" />
+  <img src="https://img.shields.io/badge/Self--hosted-non--custodial-0F172A?style=flat-square" alt="Self-hosted and non-custodial" />
+  <img src="https://img.shields.io/badge/MCP-agent_integration-6E56CF?style=flat-square" alt="MCP" />
   <img src="https://img.shields.io/badge/x402-USDC-2775CA?style=flat-square" alt="x402 USDC" />
   <img src="https://img.shields.io/badge/ERC--8004-identity_%26_reputation-0B2D5C?style=flat-square" alt="ERC-8004" />
+  <img src="https://img.shields.io/badge/Solidity-0.8.24-363636?style=flat-square&logo=solidity" alt="Solidity" />
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React" />
   <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js" />
@@ -27,6 +29,7 @@
   <a href="#-the-problem">Problem</a> ·
   <a href="#-the-solution">Solution</a> ·
   <a href="#-how-it-works">How it works</a> ·
+  <a href="#-plug-in-any-agent-over-mcp">MCP</a> ·
   <a href="#-deployed-contracts">Contracts</a> ·
   <a href="#-quick-start">Quick start</a> ·
   <a href="#-demo-flows">Demo</a>
@@ -46,67 +49,95 @@ No bank, fintech or supply chain will hand an LLM a funded wallet without the co
 
 ## 🛡️ The solution
 
-AgntPymt is a **governance layer that wraps around the AI**. The agent decides what it wants to buy. AgntPymt decides whether it's allowed. Every spend is authorized, approved and recorded by an **on-chain policy contract on Arbitrum**, and settled in USDC over [x402](https://x402.org).
+AgntPymt is a **self-hosted payment gateway that sits between an enterprise's AI agents and its money**. The agent decides what it wants to buy. AgntPymt decides whether it's allowed, then settles in stablecoins over [x402](https://x402.org).
+
+It runs on the enterprise's own servers. Policy checks happen in the gateway at API speed, agent keys never leave the company's infrastructure, and AgntPymt the company never holds or moves customer funds.
 
 <table>
   <tr>
     <td width="50%" valign="top">
       <h3>🪪 Agent identity</h3>
-      Every agent gets its own wallet, bound on-chain with an <b>EIP-712 consent signature</b>. Every dollar is tied to a named agent, not a shared key.
+      Every agent gets its own wallet and an <b>ERC-8004</b> identity. Every dollar is tied to a named agent, not a shared key.
     </td>
     <td width="50%" valign="top">
-      <h3>📜 Rules the AI can't talk around</h3>
-      <code>AgentSpendPolicy</code> enforces per-tx caps, daily caps, auto-approve thresholds and kill switches. Not the agent, not the prompt, not even our server can bypass it.
+      <h3>📜 Rules in code, not in prompts</h3>
+      The gateway enforces auto-approve thresholds, rolling 24-hour caps, an org-wide exposure ceiling and a kill switch <b>before any payment is signed</b>. The LLM never holds the key, so no prompt can talk its way past a limit.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
       <h3>🙋 Human-in-the-loop</h3>
-      Small spends settle instantly. Anything above the threshold waits for a human to <code>approve()</code> on-chain, and expires after 3 days.
+      Small spends settle instantly. Anything above the threshold waits in the approvals queue for a human, at machine speed rather than ticket speed.
     </td>
     <td width="50%" valign="top">
       <h3>🧾 Regulator-grade audit</h3>
-      x402 USDC settlement is recorded against the on-chain request, and every seller is rated on the <b>ERC-8004</b> reputation registry.
+      Every decision (authorize, escalate, approve, deny, settle) is logged with the x402 settlement hash. Enterprises that want a tamper-proof public record can anchor it on Arbitrum with <code>AgentSpendPolicy</code>.
     </td>
   </tr>
 </table>
 
-### ⚡ Why Arbitrum
+### 🏢 Why self-hosted and non-custodial
 
-- **Cheap enough to govern every call.** Agent commerce means thousands of $0.01 payments. A policy check, an approval and a settlement record cost cents on Arbitrum, so governance doesn't eat the margin.
-- **Settlement and governance on one chain.** x402 USDC (`eip155:421614`), ERC-8004 identity and reputation, and `AgentSpendPolicy` all live on Arbitrum Sepolia. The whole audit trail is one Arbiscan query.
-- **Robinhood Chain.** The same contract runs on Robinhood Chain testnet, an Arbitrum chain, so agents can be governed wherever tokenized assets live.
+- **Your servers, your keys, your rules.** Banks and fintechs won't route agent spend through a third party's cloud. AgntPymt deploys into their own environment (Docker image included).
+- **We never touch the money.** The enterprise's agents pay vendors directly in stablecoins. AgntPymt is software, not a payment intermediary.
+- **Fast by default.** Policy runs in-process at the gateway, so a $0.01 API call isn't held up waiting for a block. On-chain anchoring is opt-in.
+
+### ⛓️ Where the chain comes in
+
+- **Settlement:** USDC over x402 on Arbitrum (`eip155:421614`). The gateway is rail-agnostic; more EVM chains and XRPL are on the roadmap.
+- **Identity and reputation:** agents and sellers are registered on the **ERC-8004** registries, and every seller is rated after settlement.
+- **Optional audit anchor:** `AgentSpendPolicy` mirrors the gateway's decisions on-chain (request, approve, settle, cancel) so an auditor can verify the trail on Arbiscan without trusting the enterprise's database. It's deployed and verified on Arbitrum Sepolia and Robinhood Chain testnet.
 
 ## 🔄 How it works
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant A as 🤖 Agent (Hermes / MCP)
-    participant P as 🛡️ AgntPymt control plane
-    participant C as 📜 AgentSpendPolicy (Arbitrum)
+    participant A as 🤖 Agent (any MCP client)
+    participant P as 🛡️ AgntPymt gateway (enterprise servers)
     participant H as 🙋 Human approver
     participant X as 💸 x402 facilitator (USDC)
+    participant C as 📜 AgentSpendPolicy (optional, Arbitrum)
     participant R as ⭐ ERC-8004 reputation
 
-    A->>P: "Buy premium sector data"
-    P->>P: Negotiate with seller, check org policy
-    P->>C: requestSpend(agent, vendor, amount)
-    alt amount ≤ auto-approve
-        C-->>P: Authorized
-    else amount > auto-approve
-        C-->>P: PendingApproval
-        P->>H: Approval request in UI
-        H->>C: approve(id)
-        C-->>P: Approved
+    A->>P: agntpymt_initiate_purchase("Buy premium sector data")
+    P->>P: Kill switch, org ceiling, 24h cap, auto-approve threshold
+    P->>P: Negotiate with seller
+    opt on-chain audit enabled
+        P->>C: requestSpend(agent, vendor, amount)
     end
-    P->>X: Pay seller in USDC
+    alt amount ≤ auto-approve
+        P-->>A: Authorized
+    else amount > auto-approve
+        P->>H: Approval request in UI
+        H->>P: Approve
+    end
+    P->>X: Agent wallet pays seller in USDC
     X-->>P: Settlement tx hash
-    P->>C: markSettled(id, txHash)
+    opt on-chain audit enabled
+        P->>C: markSettled(id, txHash)
+    end
     P->>R: Rate the seller
 ```
 
-### 📜 `AgentSpendPolicy.sol` ([`contracts/`](contracts/))
+## 🔌 Plug in any agent over MCP
+
+AgntPymt ships an MCP server, so any agent that speaks MCP (Claude, Cursor, Hermes, LangChain and others) can pay through the gateway without an SDK integration:
+
+| Tool | What it does |
+| --- | --- |
+| `agntpymt_get_agent_policy` | The agent's identity, wallet and spend limits |
+| `agntpymt_initiate_purchase` | Match a vendor, enforce policy, negotiate and settle |
+| `agntpymt_request_paid_resource` | Buy premium data or compute through the gateway |
+| `agntpymt_list_pending_approvals` | Purchases waiting on a human |
+| `agntpymt_list_transactions` | The agent's audit ledger |
+| `agntpymt_list_agents` | Agents in the org |
+
+The goal is one-prompt onboarding: a company pastes a setup prompt into its existing agent, the agent connects to AgntPymt, and a human sets its limits in the dashboard. Limits are always set by a human; the agent can only read them.
+
+### 📜 `AgentSpendPolicy.sol`: optional on-chain audit anchor ([`contracts/`](contracts/))
+
+For enterprises that want their auditor to verify the trail independently, the gateway mirrors each decision to this contract. The contract re-checks the same limits, so a buggy or compromised gateway can't record a spend that breaks policy without the contract rejecting it.
 
 | Feature | How |
 | --- | --- |
@@ -220,13 +251,16 @@ See `docs/hermes-mcp.example.json` for a manual MCP reference (AgntPymt auto-wri
 
 ## 🗺️ Roadmap
 
-- [x] On-chain `AgentSpendPolicy` with 16 Hardhat tests
-- [x] Deployed and verified on Arbitrum Sepolia and Robinhood Chain testnet
-- [x] x402 USDC settlement and ERC-8004 reputation on Arbitrum
-- [ ] Arbitrum One mainnet deploy, with a Safe multisig as policy admin
-- [ ] On-chain vendor allowlists
-- [ ] Stylus port of the policy hot path for cheaper checks
-- [ ] SDK so any agent framework can call `requestSpend` via MCP
+- [x] Self-hosted gateway with auto-approve, 24h caps, org ceiling, kill switch and human approvals
+- [x] MCP server so any MCP-capable agent can pay through the gateway
+- [x] x402 USDC settlement and ERC-8004 identity and reputation on Arbitrum
+- [x] Optional on-chain audit anchor (`AgentSpendPolicy`, 16 Hardhat tests), verified on Arbitrum Sepolia and Robinhood Chain testnet
+- [ ] One-prompt onboarding: paste a prompt into your agent and it connects itself to AgntPymt
+- [ ] Vendor allowlists, tool allowlists, and payment-count limits per day, week and month
+- [ ] Invoice capture, entered by a human or generated by the agent
+- [ ] Enterprise key management (cloud KMS, HSM or MPC) in place of keys in environment files
+- [ ] More stablecoin rails: additional EVM chains and XRPL
+- [ ] Merchant side: let sellers accept governed agent payments
 
 ---
 
@@ -234,6 +268,6 @@ See `docs/hermes-mcp.example.json` for a manual MCP reference (AgntPymt auto-wri
 
 **Your agents are moving fast. Your controls should too.**
 
-Built for the Arbitrum Open House Singapore Buildathon.
+Started at the Arbitrum Open House Singapore Buildathon. Submitted to Colosseum's Crypto World's Fair.
 
 </div>
